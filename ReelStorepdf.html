@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Inline PDF</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+    }
+
+    .pdf-container {
+        max-width: 900px;
+        margin: 40px auto;
+        background: #fff;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,.1);
+    }
+
+    canvas {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+</style>
+</head>
+<body>
+
+<div class="pdf-container" id="pdf-container"></div>
+
+<!-- PDF.js CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- const pdfUrl = 'resources/trs_brochure.pdf'; // <-- your PDF path -->
+
+<script>
+    const pdfUrl = 'resources/trs_brochure.pdf'; // <-- your PDF path
+
+    const container = document.getElementById('pdf-container');
+
+    pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            pdf.getPage(pageNum).then(page => {
+                const scale = 1.5;
+                const viewport = page.getViewport({ scale });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                container.appendChild(canvas);
+
+                page.render({
+                    canvasContext: context,
+                    viewport: viewport
+                });
+            });
+        }
+    });
+</script>
+
+</body>
+</html>
